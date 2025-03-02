@@ -13,9 +13,20 @@ export default function Hero() {
   
         {/* Buttons Container (Ensure Higher Z-Index) */}
         <div className="mt-6 flex space-x-4 relative z-10">
-          <Link className="px-6 py-3 bg-purple-600 hover:bg-purple-700 transition-all rounded-lg text-lg font-semibold" href="/create">
-            + Create New Token
+          <Link 
+            href="/create" 
+            className="relative px-6 py-3 font-semibold text-white transition-all duration-300 
+                      bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg 
+                      hover:shadow-blue-500/50 hover:scale-105"
+          >
+            <span className="absolute inset-0 opacity-50 blur-lg bg-gradient-to-r from-blue-500 to-purple-500"></span>
+            <span className="relative z-10 flex items-center gap-2">
+              <span>+ Create New Token</span>
+            </span>
           </Link>
+          {/* <Link className="px-6 py-3 bg-purple-600 hover:bg-purple-700 transition-all rounded-lg text-lg font-semibold" href="/create">
+            
+          </Link> */}
         </div>
   
         {/* Rocket Image Container (Lower Z-Index to Avoid Blocking Clicks) */}

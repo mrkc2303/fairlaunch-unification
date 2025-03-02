@@ -12,6 +12,7 @@
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@tailwindcss/postcss": "^4.0.9",
     "@tanstack/react-query": "^5.55.3",
+    "@wormhole-foundation/wormhole-connect": "^2.2.0",
     "chart.js": "^4.4.8",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.5",

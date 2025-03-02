@@ -26,6 +26,31 @@ const zircuitGarfieldTestnet = defineChain({
   network: 'zircuit-garfield-testnet',
 });
 
+const AvailZK1 = defineChain({
+  id: 271,
+  name: 'ZK Sync Nexus 1',
+  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://zksync1.nexus.avail.tools'] },
+    public: { http: ['https://zksync1.nexus.avail.tools'] },
+  },
+  blockExplorers: {
+    default: { name: 'Zircuit Garfield Explorer', url: 'https://explorer.garfield-testnet.zircuit.com/' },
+  },
+  network: 'avail-zk-nexus-1',
+});
+
+const AvailZK2 = defineChain({
+  id: 272, 
+  name: 'ZK Sync Nexus 2',
+  nativeCurrency: { name: 'Ethereum', symbol: 'ETH', decimals: 18 },
+  rpcUrls: {
+    default: { http: ['https://zksync2.nexus.avail.tools'] },
+    public: { http: ['https://zksync2.nexus.avail.tools'] },
+  },
+  network: 'avail-zk-nexus-2',
+});
+
 export const config = getDefaultConfig({
   appName: 'FairLaunch',
   projectId: 'YOUR_PROJECT_ID',
@@ -37,8 +62,9 @@ export const config = getDefaultConfig({
     // base,
     sepolia,
     baseSepolia,
-    zircuitTestnet,
-    zircuitGarfieldTestnet
+    zircuitGarfieldTestnet,
+    AvailZK1,
+    AvailZK2
   ],
   ssr: true,
 });

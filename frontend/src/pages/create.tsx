@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAccount, useWalletClient } from "wagmi";
 import { ethers } from "ethers";
-
+import { useRouter } from "next/router";
 import { getERC20Contract, getFactoryContract, getNetworkConfig } from "../constants/networkMapping";
 import Header from "../components/Header";
-import ERC20ABI from "../constants/ERC20ABI.json"; // Standard ERC-20 ABI
+import ERC20ABI from "../constants/ERC20ABI.json";
+import Modal from "../components/Modal";
 
 export default function CreateToken() { 
   const { address } = useAccount();
@@ -13,6 +14,8 @@ export default function CreateToken() {
   const [loading, setLoading] = useState(false);
   const [networkConfig, setNetworkConfig] = useState<any>(null);
   const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
 
   const [tokenDetails, setTokenDetails] = useState({
     name: "",
@@ -22,6 +25,79 @@ export default function CreateToken() {
     initialUSDC: "",
     banner: ""
   });
+
+
+  const chains = {
+    BaseSepolia: {
+      id: 84532,
+      name: "Base Sepolia",
+      token: "0x891B23C26623625BA43fD5A18c6c6aB08fa59e45",
+      rpc: "https://base-sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0" // Ensure correct RPC!
+    },
+    Sepolia: {
+      id: 11155111,
+      name: "Ethereum Sepolia",
+      token: "0x944f6B7736622BDC76ED09e40CD77eC7afeCd2cE",
+      rpc: "https://sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0"
+    }
+  } as const;
+  
+
+  const [selectedChain, setSelectedChain] = useState("Sepolia");
+  const [usdcBalance, setUsdcBalance] = useState<string>("0");
+
+  // Fetch signer and USDC balance
+  useEffect(() => {
+    async function initialize() {
+      if (!walletClient) return;
+      const newProvider = new ethers.BrowserProvider(window.ethereum);
+      setProvider(newProvider);
+      const _signer = await newProvider.getSigner();
+      setSigner(_signer);
+
+      const config = await getNetworkConfig();
+      setNetworkConfig(config);
+
+      // Fetch USDC balance
+      await fetchUSDCBalance();
+    }
+
+    initialize();
+  }, [walletClient, selectedChain]);
+
+  const fetchUSDCBalance = async () => {
+    if (!provider || !signer) return;
+  
+    try {
+  
+      // Reinitialize provider to ensure it's on the right chain
+      const provider = new ethers.JsonRpcProvider(chains[selectedChain as keyof typeof chains].rpc);
+      
+      // Ensure the contract exists before calling balanceOf
+      const bytecode = await provider.getCode(chains[selectedChain as keyof typeof chains].token);
+      if (bytecode === "0x") {
+        throw new Error("❌ Contract does not exist on the selected chain!");
+      }
+  
+      const usdcContract = new ethers.Contract(
+        chains[selectedChain as keyof typeof chains].token,
+        ERC20ABI,
+        provider
+      );
+  
+      const balance = await usdcContract.balanceOf(address);
+      console.log("Raw Balance:", balance.toString());
+  
+      setUsdcBalance(ethers.formatUnits(balance, 6)); // Assuming USDC has 6 decimals
+    } catch (error) {
+      console.error("Error fetching USDC balance:", error);
+      setUsdcBalance("0");
+    }
+  };
+  
+  const handleChainChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedChain(event.target.value);
+  };
 
   // ✅ Fetch signer and network config only once
   useEffect(() => {
@@ -57,64 +133,69 @@ export default function CreateToken() {
       return;
     }
 
-    setLoading(true);
+    if(selectedChain === "Sepolia") {
+      setLoading(true);
 
-    try {
-      const factoryContract = await getFactoryContract(signer);
-      const usdcContract = await getERC20Contract();
-      if (!usdcContract) {
-        throw new Error("USDC Contract not available.");
+      try {
+        const factoryContract = await getFactoryContract(signer);
+        const usdcContract = await getERC20Contract();
+        if (!usdcContract) {
+          throw new Error("USDC Contract not available.");
+        }
+  
+        const usdcAmount = ethers.parseUnits(tokenDetails.initialUSDC.toString(), 18);
+  
+        console.log("Checking USDC Balance...");
+        const usdcBalance = await usdcContract.balanceOf(address);
+        console.log("USDC Balance:", ethers.formatUnits(usdcBalance, 18));
+  
+        if (usdcBalance < usdcAmount) {
+          alert("Not enough USDC balance!");
+          setLoading(false);
+          return;
+        }
+  
+        console.log("Checking Allowance...");
+        const allowance = await usdcContract.allowance(address, factoryContract.target);
+        console.log("USDC Allowance:", ethers.formatUnits(allowance, 6));
+  
+        if (allowance < usdcAmount) {
+          console.log("Approving USDC Transfer...");
+          const approvalTx = await usdcContract.approve(factoryContract.target, usdcAmount);
+          await approvalTx.wait();
+          console.log("USDC Approved!");
+        }
+  
+        console.log("Deploying Token...");
+        const tx = await factoryContract.deployToken(
+          {
+            tokenName: tokenDetails.name,
+            tokenTicker: tokenDetails.ticker,
+            description: tokenDetails.description,
+            bannerUrl: tokenDetails.banner,
+            posterUrl: tokenDetails.image,
+          },
+          usdcAmount,
+          { gasLimit: 800000 }
+        );
+        await tx.wait();
+  
+        alert("Token Deployed Successfully!");
+      } catch (error) {
+        console.error("Deployment Error:", error);
+        alert("Token Deployment Failed! Check console logs.");
       }
-
-      const usdcAmount = ethers.parseUnits(tokenDetails.initialUSDC.toString(), 6);
-
-      console.log("Checking USDC Balance...");
-      const usdcBalance = await usdcContract.balanceOf(address);
-      console.log("USDC Balance:", ethers.formatUnits(usdcBalance, 6));
-
-      if (usdcBalance < usdcAmount) {
-        alert("Not enough USDC balance!");
-        setLoading(false);
-        return;
-      }
-
-      console.log("Checking Allowance...");
-      const allowance = await usdcContract.allowance(address, factoryContract.target);
-      console.log("USDC Allowance:", ethers.formatUnits(allowance, 6));
-
-      if (allowance < usdcAmount) {
-        console.log("Approving USDC Transfer...");
-        const approvalTx = await usdcContract.approve(factoryContract.target, usdcAmount);
-        await approvalTx.wait();
-        console.log("USDC Approved!");
-      }
-
-      console.log("Deploying Token...");
-      const tx = await factoryContract.deployToken(
-        {
-          tokenName: tokenDetails.name,
-          tokenTicker: tokenDetails.ticker,
-          description: tokenDetails.description,
-          bannerUrl: tokenDetails.banner,
-          posterUrl: tokenDetails.image,
-        },
-        usdcAmount,
-        { gasLimit: 800000 }
-      );
-      await tx.wait();
-
-      alert("Token Deployed Successfully!");
-    } catch (error) {
-      console.error("Deployment Error:", error);
-      alert("Token Deployment Failed! Check console logs.");
+  
+      setLoading(false);
+    } else {
+      setShowModal(true);
     }
-
-    setLoading(false);
   };
 
   return (
     <>
-      {/* <Header /> */}
+      <Modal show={showModal} onClose={() => setShowModal(false)} />
+
       <main className="container mx-auto p-6 max-w-2xl">
         <h2 className="text-2xl font-bold text-white mb-4">Create a New Token</h2>
         <div className="bg-[#1A1A2E] shadow p-6 rounded-lg border border-[#292B3A]">
@@ -148,10 +229,45 @@ export default function CreateToken() {
                  className="w-full border p-2 rounded bg-[#2A2D3E] text-white mb-4"
                  placeholder="Enter USDC Amount for Token Launch" />
 
-          <button onClick={handleSubmit} disabled={loading}
-                  className="w-full bg-green-500 text-black py-2 rounded-lg">
-            {loading ? "Deploying..." : "Deploy Token"}
-          </button>
+          <h2 className="text-2xl font-bold text-white mb-4">Create a New Token</h2>
+          <div className="bg-[#1A1A2E] shadow p-6 rounded-lg border border-[#292B3A]">
+            
+            {/* Chain Selector with USDC Balance */}
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col">
+                <label className="text-gray-300 mb-1">Select Source Chain</label>
+                <select
+                  className="border p-2 rounded bg-[#2A2D3E] text-white"
+                  value={selectedChain}
+                  onChange={handleChainChange}
+                >
+                  {Object.entries(chains).map(([key, value]) => (
+                    <option key={key} value={key}>{value.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Display USDC Balance */}
+              <div className="text-white text-sm">
+                <p>💰 USDC Balance: {usdcBalance}</p>
+              </div>
+            </div>
+
+            {/* Deploy Token Button */}
+            <button 
+              onClick={handleSubmit} 
+              disabled={loading}
+              className="w-full bg-green-500 text-black py-2 rounded-lg"
+            >
+              {loading 
+                ? "Deploying..."
+                : selectedChain === "Sepolia"
+                  ? `Deploy Token from ${chains[selectedChain as keyof typeof chains].name}`
+                  : `Cross-Chain Deploy via NTT from ${chains[selectedChain as keyof typeof chains].name} to Sepolia`
+              }
+            </button>
+
+          </div>
         </div>
       </main>
     </>

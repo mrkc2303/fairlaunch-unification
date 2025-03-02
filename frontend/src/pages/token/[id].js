@@ -64,7 +64,7 @@
           try {
             const contract = new ethers.Contract(netConfig.USDCToken, ERC20ABI, provider);
             const bal = await contract.balanceOf(address);
-            setBalance(ethers.formatUnits(bal, 6));
+            setBalance(ethers.formatUnits(bal, 18));
           } catch (error) {
             console.error("Error fetching balance:", error);
           }
@@ -119,7 +119,6 @@
     
             let bondingCurveHoldings = 0;
     
-            // ✅ Compute percentages
             const holderArray = Object.entries(holderBalances)
               .map(([addr, bal]) => {
                 let balance = parseFloat(ethers.formatUnits(bal, 18));

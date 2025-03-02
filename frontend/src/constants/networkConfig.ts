@@ -10,10 +10,10 @@ export const NETWORK_CONFIG: { [key: number]: {
     11155111: {
         name: "Sepolia",
         rpcUrl: "https://gateway.tenderly.co/public/sepolia",
-        whitelisted: "0x7c353533C192e5096cE01C3F2D8BA2CDeC184920",
-        bonding: "0xd6B1CC8a1eD4DAbEF0A0425030CcbE3571A239d4",
-        factory: "0x1030beED2D98c68f45B791B9Bdc9E184bc53fef4",
-        USDCToken: "0x9Fb12C42Fd17062EC67D29ac7C35Ad3957D1620b",
+        whitelisted: "0x54956bb91f0b5E8337D21905A6408fb60bB8DA4a",
+        bonding: "0x147029760F0BCE2Ec97d42e51bE059763A2A56e5",
+        factory: "0xd02F1F7162bD14Ca8de19a0EA301464a957ae629",
+        USDCToken: "0x944f6B7736622BDC76ED09e40CD77eC7afeCd2cE",
         startBlock: 7800000,
     },
     48898: {
