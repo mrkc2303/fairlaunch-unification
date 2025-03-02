@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAccount, useWalletClient } from "wagmi";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
@@ -6,6 +6,7 @@ import { getERC20Contract, getFactoryContract, getNetworkConfig } from "../const
 import Header from "../components/Header";
 import ERC20ABI from "../constants/ERC20ABI.json";
 import Modal from "../components/Modal";
+
 
 export default function CreateToken() { 
   const { address } = useAccount();
@@ -32,7 +33,7 @@ export default function CreateToken() {
       id: 84532,
       name: "Base Sepolia",
       token: "0x891B23C26623625BA43fD5A18c6c6aB08fa59e45",
-      rpc: "https://base-sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0" // Ensure correct RPC!
+      rpc: "https://base-sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0"
     },
     Sepolia: {
       id: 11155111,
@@ -44,7 +45,7 @@ export default function CreateToken() {
   
 
   const [selectedChain, setSelectedChain] = useState("Sepolia");
-  const [usdcBalance, setUsdcBalance] = useState<string>("0");
+  const [usdcBalance, setUsdcBalance] = useState<string>("0.0");
 
   // Fetch signer and USDC balance
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function CreateToken() {
     initialize();
   }, [walletClient, selectedChain]);
 
-  const fetchUSDCBalance = async () => {
+  const fetchUSDCBalance = useCallback(async () => {
     if (!provider || !signer) return;
   
     try {
@@ -88,12 +89,16 @@ export default function CreateToken() {
       const balance = await usdcContract.balanceOf(address);
       console.log("Raw Balance:", balance.toString());
   
-      setUsdcBalance(ethers.formatUnits(balance, 6)); // Assuming USDC has 6 decimals
+      setUsdcBalance(ethers.formatUnits(balance, 18)); // Assuming USDC has 6 decimals
     } catch (error) {
       console.error("Error fetching USDC balance:", error);
       setUsdcBalance("0");
     }
-  };
+  }, [provider, signer, selectedChain, address]);
+
+  useEffect(() => {
+    fetchUSDCBalance();
+  }, [fetchUSDCBalance]);
   
   const handleChainChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedChain(event.target.value);
@@ -145,26 +150,26 @@ export default function CreateToken() {
   
         const usdcAmount = ethers.parseUnits(tokenDetails.initialUSDC.toString(), 18);
   
-        console.log("Checking USDC Balance...");
-        const usdcBalance = await usdcContract.balanceOf(address);
-        console.log("USDC Balance:", ethers.formatUnits(usdcBalance, 18));
+        // console.log("Checking USDC Balance...");
+        // const usdcBalance = await usdcContract.balanceOf(address);
+        // console.log("USDC Balance:", ethers.formatUnits(usdcBalance, 18));
   
-        if (usdcBalance < usdcAmount) {
-          alert("Not enough USDC balance!");
-          setLoading(false);
-          return;
-        }
+        // if (usdcBalance < usdcAmount) {
+        //   alert("Not enough USDC balance!");
+        //   setLoading(false);
+        //   return;
+        // }
   
-        console.log("Checking Allowance...");
-        const allowance = await usdcContract.allowance(address, factoryContract.target);
-        console.log("USDC Allowance:", ethers.formatUnits(allowance, 6));
+        // console.log("Checking Allowance...");
+        // const allowance = await usdcContract.allowance(address, factoryContract.target);
+        // console.log("USDC Allowance:", ethers.formatUnits(allowance, 18));
   
-        if (allowance < usdcAmount) {
+        // if (allowance < usdcAmount) {
           console.log("Approving USDC Transfer...");
           const approvalTx = await usdcContract.approve(factoryContract.target, usdcAmount);
           await approvalTx.wait();
           console.log("USDC Approved!");
-        }
+        // }
   
         console.log("Deploying Token...");
         const tx = await factoryContract.deployToken(

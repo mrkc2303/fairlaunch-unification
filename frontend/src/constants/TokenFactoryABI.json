@@ -110,6 +110,11 @@
           "type": "address"
         },
         {
+          "internalType": "address",
+          "name": "_tokenToPay",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
@@ -153,6 +158,11 @@
           "internalType": "struct TokenFactory.CampaignParams",
           "name": "_campaign",
           "type": "tuple"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenToPay",
+          "type": "address"
         },
         {
           "internalType": "uint256",

@@ -29,18 +29,16 @@
       const [netConfig, setNetConfig] = useState(null);
       const [loading, setLoading] = useState(false);
     
-      // ✅ Fetch Network Config inside useEffect
       useEffect(() => {
         const fetchNetworkConfig = async () => {
-          const config = await getNetworkConfig(); // ✅ Fetch config here
+          const config = await getNetworkConfig();
           setNetConfig(config);
-          setProvider(new ethers.JsonRpcProvider(config.rpcUrl)); // ✅ Set provider after fetching
+          setProvider(new ethers.JsonRpcProvider(config.rpcUrl));
         };
     
         fetchNetworkConfig();
       }, []);
     
-      // ✅ Fetch Token Data
       useEffect(() => {
         if (!id || !campaigns.length || !netConfig) return;
     
@@ -48,7 +46,7 @@
         if (foundToken) {
           setToken({
             ...foundToken,
-            marketCap: 50000, // Placeholder
+            marketCap: 50000,
             supply: 1000000, // Placeholder
             price: 1.5, // Placeholder
             image: foundToken.image !== "test" ? foundToken.image : `https://picsum.photos/400/300?random=${foundToken.tokenAddress}`,

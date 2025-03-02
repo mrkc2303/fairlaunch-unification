@@ -9,16 +9,16 @@ export const NETWORK_CONFIG: { [key: number]: {
 } } = {
     11155111: {
         name: "Sepolia",
-        rpcUrl: "https://gateway.tenderly.co/public/sepolia",
-        whitelisted: "0x54956bb91f0b5E8337D21905A6408fb60bB8DA4a",
-        bonding: "0x147029760F0BCE2Ec97d42e51bE059763A2A56e5",
-        factory: "0xd02F1F7162bD14Ca8de19a0EA301464a957ae629",
+        rpcUrl: "https://sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0",
+        whitelisted: "0x435c561Bec7582B8D46C744C80C0B8044419Ed29",
+        bonding: "0x33D6Ca727268D39bFCFA2e1b559768E6Ee3b7798",
+        factory: "0xcf1de34De1d344733E43150788dc02f0d2f21951",
         USDCToken: "0x944f6B7736622BDC76ED09e40CD77eC7afeCd2cE",
-        startBlock: 7800000,
+        startBlock: 7819000,
     },
     48898: {
         name: "Zircuit Garfield Testnet",
-        rpcUrl: "https://garfield-testnet.zircuit.com/",
+        rpcUrl: "https://sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0",
         whitelisted: "0x92C878b7e49050563420aCa88c6507BDdAd497C0",
         bonding: "0x6eA996dB06678C1E4221B13ed4F3e2aA98331cE6",
         factory: "0x1Eb10f1CD0a9219fAEe2D22CEEb52dfd3525ED30",

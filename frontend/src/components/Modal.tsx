@@ -10,7 +10,7 @@ export default function Modal({ show, onClose }: { show: boolean; onClose: () =>
       <div className="bg-[#1A1A2E] p-6 rounded-lg border border-[#FF0000] shadow-xl text-white w-96 text-center">
         <h2 className="text-lg font-bold text-red-500">Cross-Chain Deployment Required</h2>
         <p className="text-sm text-gray-400 my-4">
-          Since you're deploying from <span className="text-blue-500">BaseSepolia</span>, you need to swap NTTs first.
+          Since you&apos;re deploying from <span className="text-blue-500">BaseSepolia</span>, you need to swap NTTs first.
         </p>
 
         <div className="flex justify-between gap-4 mt-4">

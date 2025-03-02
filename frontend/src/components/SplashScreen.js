@@ -8,7 +8,7 @@ export default function SplashScreen({ onFinish }) {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [onFinish]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black z-50 animate-fadeOut">
