@@ -11,7 +11,7 @@ export default function BuyToken() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main className="container mx-auto p-6">
         <h2 className="text-2xl font-bold mb-4">Buy Tokens</h2>
 

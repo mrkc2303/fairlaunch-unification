@@ -114,7 +114,7 @@ export default function CreateToken() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       <main className="container mx-auto p-6 max-w-2xl">
         <h2 className="text-2xl font-bold text-white mb-4">Create a New Token</h2>
         <div className="bg-[#1A1A2E] shadow p-6 rounded-lg border border-[#292B3A]">

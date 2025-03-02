@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       <Hero />
       
       <div className="mx-5 py-10">

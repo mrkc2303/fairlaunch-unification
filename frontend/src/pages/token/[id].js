@@ -202,7 +202,7 @@
     return (
       <>
         {loading ? <Loader /> : <></>}
-        <Header />
+        {/* <Header /> */}
         <main className="container mx-auto p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
@@ -213,9 +213,6 @@
               <div className="mt-6 text-center">
                   <Image src={token.image} alt={token.tokenName} width={300} height={200} className="rounded-lg mx-auto" />
                   <h3 className="text-xl text-white mt-4">{token.tokenName} ({token.tokenTicker})</h3>
-                  <p className="text-gray-400">Market Cap: ${token.marketCap ? token.marketCap.toLocaleString() : "Loading..."}</p>
-                  <p className="text-gray-400">Total Supply: {token.supply ? token.supply.toLocaleString() : "Loading..."}</p>
-                  <p className="text-gray-400">Current Price: {token.price ? `${token.price} USDC` : "Loading..."}</p>
               </div>
             </div>
   
@@ -270,8 +267,8 @@
                   <ul className="text-gray-400 text-sm">
                       {holders.map((holder, index) => (
                       <li key={index} className="flex justify-between">
-                          <span>{index + 1}. {holder.address}</span>
-                          <span>{holder.balance.toLocaleString()} tokens ({holder.percentage})</span>
+                      <span>{index + 1}. {String(netConfig?.bonding) !== String(holder.address) ? holder.address.slice(0, 15) + "..." : `${holder.address.slice(0, 15)}... (Curve)`}</span>
+                      <span>{holder.balance.toLocaleString()} tokens ({holder.percentage})</span>
                       </li>
                       ))}
                   </ul>
