@@ -1,7 +1,7 @@
 # 🚀 FairLaunch  
 
 ## Access it here
-https://fair-launch-eth.vercel.app/
+fairlaunch-unification.vercel.app
 
 ## 🌟 Overview  
 FairLaunch is a **sybil-resistant, multichain** token launchpad that ensures fair participation in meme coins, AI agents, and community-driven tokens. By leveraging **Humanity Protocol** for proof of personhood and **Zircuit** for secure, efficient transactions, we prevent sniper bots and enable organic token growth.  
