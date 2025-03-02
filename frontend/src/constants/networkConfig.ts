@@ -10,9 +10,9 @@ export const NETWORK_CONFIG: { [key: number]: {
     11155111: {
         name: "Sepolia",
         rpcUrl: "https://sepolia.infura.io/v3/ac4daccf4fac48e6b0cafbd45dd05da0",
-        whitelisted: "0x435c561Bec7582B8D46C744C80C0B8044419Ed29",
-        bonding: "0x33D6Ca727268D39bFCFA2e1b559768E6Ee3b7798",
-        factory: "0xcf1de34De1d344733E43150788dc02f0d2f21951",
+        whitelisted: "0xbc542815b0c9279f9D9696B6c9C1B50EfA630e1A",
+        bonding: "0xE519048E665274e1B17F9a3EC9F2964D6CF5A71B",
+        factory: "0xb7c798Eb5512F68f5C79f1a99F909ed72F2310d3",
         USDCToken: "0x944f6B7736622BDC76ED09e40CD77eC7afeCd2cE",
         startBlock: 7819000,
     },

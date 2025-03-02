@@ -170,6 +170,8 @@ export default function CreateToken() {
           await approvalTx.wait();
           console.log("USDC Approved!");
         // }
+
+        console.log(usdcAmount)
   
         console.log("Deploying Token...");
         const tx = await factoryContract.deployToken(
@@ -180,6 +182,7 @@ export default function CreateToken() {
             bannerUrl: tokenDetails.banner,
             posterUrl: tokenDetails.image,
           },
+          networkConfig.USDCToken,
           usdcAmount,
           { gasLimit: 800000 }
         );
