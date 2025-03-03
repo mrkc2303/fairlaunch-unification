@@ -57,6 +57,13 @@ contract TokenFactory {
     }
 
     function sellToken(address token,uint256 _amount) external{
-
+        bytes32 campaign = whitelister.campaign_token(token);
+        if(!whitelister.isWhitelisted(campaign, msg.sender)) revert NotWhitelisted();
+        uint256 tokenAmount = MemeToken(token).balanceOf(msg.sender);
+        uint256 balanceBuy = BondingCurveAddress.getTokenValue(token, tokenAmount);
+        if(balanceBuy>BUYLIMIT) revert LimitAmountExceeded();
+        uint256 tokenToSend = BondingCurveAddress.getTokenAmount(token, _amount);
+        MemeToken(_tokenToPay).transferFrom(msg.sender,address(BondingCurveAddress), _amount);
+        BondingCurveAddress.sendToken(token, msg.sender, tokenToSend);
     }
 }
